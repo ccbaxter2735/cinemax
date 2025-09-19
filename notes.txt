@@ -1,0 +1,91 @@
+Creation du site web + deployment
+
+-------------------- Creation Backend ----------------------
+creation de l environnement virtuel:
+python3 -m venv env
+source env/bin/activate
+
+installer toutes les dependances:
+touch requirements.txt
+mettre le nom des programmes a installer dans requirements
+pip install -r requirements.txt 
+
+creer projet backend:
+django-admin startproject nomProjet
+
+creer une app dans backend:
+python3 manage.py startapp nomAppli
+
+parametrer settings.py de django:
+ajouter ces imports:
+from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+//pour le developpement
+ALLOWED_HOSTS = ["*"]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+Mettre en place JWT:
+Json web token(JWT)
+auth a chaque fois qu on accede au site web
+json est standard format pour echanger info dans appli web
+
+prendre en compte la table de donnees:
+python3 manage.py makemigrations
+python3 manage.py migrate
+
+pour visualiser le serveur virtuel de son back:
+python3 manage.py runserver
+
+schema model - serializers:
+[ Client (navigateur / mobile / Postman) ]
+        |
+        |  (1) Envoie une requête HTTP (JSON)
+        v
+[ Django View / ViewSet ]
+        |
+        |  (2) Passe les données au Serializer (désérialisation)
+        v
+[ Serializer ]
+        |
+        |  (3) Validation (types, champs obligatoires, règles)
+        |  (4) Convertit le JSON en objet Python
+        v
+[ Model ]
+        |
+        |  (5) Sauvegarde ou lecture en base de données
+        v
+[ Base de données (PostgreSQL, SQLite, MySQL, etc.) ]
+        |
+        |  (6) Renvoie des objets Python (QuerySet / instance)
+        v
+[ Model ]
+        |
+        |  (7) Le Serializer convertit l'objet Model -> JSON (sérialisation)
+        v
+[ Django View / ViewSet ]
+        |
+        |  (8) Envoie une réponse HTTP (JSON)
+        v
+[ Client reçoit la réponse JSON ]
+
+
+
