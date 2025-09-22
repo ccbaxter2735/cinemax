@@ -87,5 +87,13 @@ schema model - serializers:
         v
 [ Client reçoit la réponse JSON ]
 
+-------------------- Creation Frontend ----------------------
 
+creer le projet react vite:
+npm create vite@latest nomDirectory -- --template react
+
+supprimer App.css et index.css
+
+axios: requete http comme fetch mais plus complet
+pas besoin de .json() manuellement, axios parse automatiquement.
 
