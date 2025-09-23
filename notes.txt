@@ -99,5 +99,18 @@ pas besoin de .json() manuellement, axios parse automatiquement.
 
 ------------------ Creation database PostgreSQL ---------------
 
+aller sur https://choreo.dev/
+creer variable env dans un .env dans le projet backend
+et dans settings.py changer la partie DARTABASES,
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PWD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
+    }
+}
 
