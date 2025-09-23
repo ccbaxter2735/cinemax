@@ -44,8 +44,8 @@ class Movie(models.Model):
     director = models.CharField("Réalisateur", max_length=255, blank=True)
     description = models.TextField("Descriptif", blank=True)
     release_date = models.DateField("Date de sortie", null=True, blank=True)
-    poster = models.ImageField("Affiche", upload_to='movies/posters/', null=True, blank=True)
-    illustration = models.ImageField("Image d'illustration", upload_to='movies/illustrations/', null=True, blank=True)
+    poster = models.ImageField("Affiche", upload_to='media/movies/posters/', null=True, blank=True)
+    illustration = models.ImageField("Image d'illustration", upload_to='media/movies/illustrations/', null=True, blank=True)
     cast = models.ManyToManyField(Actor, through='Casting', related_name='movies', blank=True)
 
     # champs dénormalisés (optionnels) — seront tenus à jour par signaux
@@ -84,11 +84,11 @@ class Movie(models.Model):
     # --- statistiques basées sur les relations utilisateur ---
     def likes_count(self):
         """Nombre total de likes (True) pour ce film."""
-        return MovieLike.objects.filter(movie=self, liked=True).count()
+        return Like.objects.filter(movie=self, liked=True).count()
 
     def average_rating(self):
         """Moyenne des notes (float) ou None si pas de notes."""
-        agg = MovieRating.objects.filter(movie=self).aggregate(avg=Avg('score'))
+        agg = Rating.objects.filter(movie=self).aggregate(avg=Avg('score'))
         return agg['avg']  # None si pas de notes
 
     def user_liked(self, user):
