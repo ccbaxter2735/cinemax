@@ -3,6 +3,8 @@ from . import views
 
 
 urlpatterns = [
+    path("user/me/", views.CurrentUserView.as_view(), name="current-user"),
+    
     # Liste des films
     path('movies/', views.MovieListView.as_view(), name='movie-list'),
 
