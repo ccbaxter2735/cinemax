@@ -5,6 +5,7 @@ import Register from "./pages/Register"
 // import Movie from "./pages/Movie"
 // import Actor from "./pages/Actor"
 import Home from "./pages/Home"
+import MoviePage from "./pages/MoviePage"
 import ProtectedRoute from "./components/ProtectedRoute"
 import NotFound from "./pages/NotFound"
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/movies/:id" element={<MoviePage />} />
         {/* <Route path="/movies/" element={<Movie />} />
         <Route path="/actors/" element={<Actor />} /> */}
         <Route path="*" element={<NotFound />} />

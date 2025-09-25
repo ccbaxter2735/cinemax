@@ -173,8 +173,8 @@ class MovieDetailSerializer(serializers.ModelSerializer):
         model = Movie
         # inclure les champs principaux + relations utiles en lecture
         fields = [
-            'id', 'title_fr', 'title_original', 'country', 'duration_minutes', 'duration',
-            'director_name', 'description', 'release_date',
+            'id', 'title_fr', 'title_original', 'origin_country', 'duration_minutes', 'duration',
+            'director', 'description', 'release_date',
             'poster', 'cover_image',
             'likes_count', 'avg_rating',
             'actors', 'comments',
@@ -184,7 +184,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
 
     def get_duration(self, obj):
         # renvoie chaîne lisible "1h 32m"
-        return obj.formatted_duration()
+        return obj.duration_display()
 
     def get_user_liked(self, obj):
         request = self.context.get('request')
@@ -216,8 +216,8 @@ class MovieCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = [
-            'id', 'title_fr', 'title_original', 'country', 'duration_minutes',
-            'director_name', 'description', 'release_date',
+            'id', 'title_fr', 'title_original', 'origin_country', 'duration_minutes',
+            'director', 'description', 'release_date',
             'poster', 'cover_image',
             'cast',
         ]

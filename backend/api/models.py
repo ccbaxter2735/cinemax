@@ -96,9 +96,9 @@ class Movie(models.Model):
         if not user or not user.is_authenticated:
             return False
         try:
-            rel = MovieLike.objects.get(movie=self, user=user)
+            rel = Like.objects.get(movie=self, user=user)
             return bool(rel.liked)
-        except MovieLike.DoesNotExist:
+        except Like.DoesNotExist:
             return False
 
     def user_rating(self, user):
@@ -106,8 +106,8 @@ class Movie(models.Model):
         if not user or not user.is_authenticated:
             return None
         try:
-            return MovieRating.objects.get(movie=self, user=user).score
-        except MovieRating.DoesNotExist:
+            return Rating.objects.get(movie=self, user=user).score
+        except Rating.DoesNotExist:
             return None
 
 
