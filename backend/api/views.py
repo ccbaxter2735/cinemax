@@ -35,22 +35,18 @@ class MovieDetailView(generics.RetrieveAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class MovieCommentListCreateView(generics.ListCreateAPIView):
+class MovieCommentsListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CreateCommentSerializer
-        from .serializers import CommentSerializer
-        return CommentSerializer
-
     def get_queryset(self):
-        movie = get_object_or_404(Movie, pk=self.kwargs['movie_id'])
-        return movie.comments.all()
+        movie_id = self.kwargs.get('movie_id')
+        return Comment.objects.filter(movie_id=movie_id).select_related('author')
 
     def perform_create(self, serializer):
-        movie = get_object_or_404(Movie, pk=self.kwargs['movie_id'])
-        serializer.save(user=self.request.user, movie=movie)
+        movie_id = self.kwargs.get('movie_id')
+        movie = generics.get_object_or_404(Movie, pk=movie_id)
+        serializer.save(author=self.request.user if self.request.user.is_authenticated else None, movie=movie)
 
 
 @api_view(['POST'])

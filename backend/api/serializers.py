@@ -57,24 +57,23 @@ class CastingSerializer(serializers.ModelSerializer):
 # Comment
 # -----------------------
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    author_username = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'text', 'published_at', 'edited']
+        fields = ['id', 'movie', 'author', 'author_username', 'text', 'created_at']
+        read_only_fields = ['id', 'author', 'author_username', 'created_at','movie']
 
+    def get_author_username(self, obj):
+        return obj.author.username if obj.author else None
 
-class CreateCommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['text']
-
-    def create(self, validated_data):
-        request = self.context.get('request')
-        movie = self.context.get('movie')  # expects view to pass the movie in context
-        if request is None or movie is None:
-            raise serializers.ValidationError("Contexte manquant pour créer le commentaire.")
-        return Comment.objects.create(user=request.user, movie=movie, **validated_data)
+    def validate_text(self, value):
+        value = value.strip()
+        if not value:
+            raise serializers.ValidationError("Le commentaire est vide.")
+        if len(value) > 2000:
+            raise serializers.ValidationError("Trop long (max 2000 caractères).")
+        return value
 
 
 # -----------------------

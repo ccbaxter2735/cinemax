@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import Avg, Q
 from django.utils import timezone
+from django.conf import settings
 
 
 
@@ -158,7 +159,7 @@ class Rating(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='movie_ratings')
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='ratings')
-    score = models.PositiveSmallIntegerField()  # on validera la borne dans clean() ou serializer
+    score = models.PositiveSmallIntegerField() 
     review = models.TextField(blank=True)  # optionnel : commentaire
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -171,15 +172,13 @@ class Rating(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='comments')
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='comments')
-    text = models.TextField()
-    published_at = models.DateTimeField(default=timezone.now)
-    edited = models.BooleanField(default=False)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    text = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
-        ordering = ['-published_at']
+        ordering = ['-created_at']
 
     def __str__(self):
-        username = self.user.username if self.user else "Anonymous"
-        return f"Comment by {username} on {self.movie}"
+        return f'Comment by {self.author or "anon"} on {self.movie}'
