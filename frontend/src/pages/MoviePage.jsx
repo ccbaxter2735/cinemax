@@ -8,6 +8,8 @@ export default function MoviePage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [user, setUser] = useState(null);
+
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +21,18 @@ export default function MoviePage() {
     if (!id) return;
     fetchMovie();
     fetchComments();
+    fetchName();
   }, [id]);
+
+    async function fetchName() {
+    try {
+      const res = await api.get("/api/user/me/");
+      setUser(res.data);
+    } catch (err) {
+      // pas connecté ou erreur
+      setUser(null);
+    }
+  }
 
   async function fetchMovie() {
     setLoading(true);
@@ -83,7 +96,7 @@ export default function MoviePage() {
 
   return (
     <div>
-      <Header />
+      <Header username={user?.username} />
       <main className="p-6">
         <button onClick={() => navigate(-1)} className="mb-4 inline-flex items-center gap-2 px-3 py-1 border rounded">
           ← Retour

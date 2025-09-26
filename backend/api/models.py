@@ -51,7 +51,7 @@ class Movie(models.Model):
 
     # champs dénormalisés (optionnels) — seront tenus à jour par signaux
     likes_count = models.PositiveIntegerField(default=0)
-    avg_rating = models.FloatField(default=0.0)
+    avg_rating = models.FloatField(null=True, blank=True, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

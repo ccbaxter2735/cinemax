@@ -21,8 +21,10 @@ function RegisterAndLogout() {
 
 function App() {
   
+  const username = localStorage.getItem("username") || "Invité";
 
   return (
+    
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />

@@ -109,36 +109,21 @@ class LikeSerializer(serializers.ModelSerializer):
 # Rating
 # -----------------------
 class RatingSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
+    # on n'expose pas 'movie' ni 'user' en écriture — ils seront injectés côté view
     class Meta:
         model = Rating
-        fields = ['id', 'user', 'movie', 'score', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at', 'user']
+        fields = ['id', 'score', 'created_at', 'updated_at']  # adapte si ton modèle a d'autres champs
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
     def validate_score(self, value):
-        # la validation fine est déjà dans le model (MinValue/MaxValue) mais on peut double-check
-        if not 1 <= value <= 10:
-            raise serializers.ValidationError("La note doit être entre 1 et 10.")
-        return value
-
-    def create(self, validated_data):
-        """
-        Si l'utilisateur a déjà noté le film, on met à jour la note existante (edit).
-        Sinon on crée une nouvelle note.
-        """
-        request = self.context.get('request')
-        if request is None or not request.user.is_authenticated:
-            raise serializers.ValidationError("Authentification requise pour noter.")
-        user = request.user
-        movie = validated_data.get('movie')
-        score = validated_data.get('score')
-
-        obj, created = Rating.objects.update_or_create(
-            user=user, movie=movie,
-            defaults={'score': score}
-        )
-        return obj
+        # S'assurer que la note est entre 1 et 10 (ou l'échelle que tu utilises)
+        try:
+            v = int(value)
+        except (TypeError, ValueError):
+            raise serializers.ValidationError(_("La note doit être un entier."))
+        if v < 0 or v > 10:
+            raise serializers.ValidationError(_("La note doit être comprise entre 0 et 10."))
+        return v
 
 
 # -----------------------

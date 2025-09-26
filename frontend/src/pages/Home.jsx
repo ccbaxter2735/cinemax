@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <div>
-      <Header username={user?.username || "Invité"} />
+      <Header username={user?.username} />
 
       <main className="p-6">
         <h2 className="text-xl font-semibold mb-4">Bienvenue sur CINEMAX</h2>

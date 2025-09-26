@@ -7,6 +7,9 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
+from rest_framework.views import APIView
+from django.db.models import Avg
+
 from .models import *
 from .serializers import *
 
@@ -63,11 +66,30 @@ def toggle_like(request, movie_id):
     })
 
 
-class MovieRatingCreateUpdateView(generics.CreateAPIView):
-    serializer_class = RatingSerializer
+class MovieRatingCreateUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['movie'] = get_object_or_404(Movie, pk=self.kwargs['movie_id'])
-        return context
+    def post(self, request, movie_id, *args, **kwargs):
+        movie = get_object_or_404(Movie, pk=movie_id)
+        serializer = RatingSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        score = serializer.validated_data['score']
+
+        # soit on met à jour, soit on crée
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            movie=movie,
+            defaults={'score': score}
+        )
+
+        # recalcul de la moyenne
+        agg = Rating.objects.filter(movie=movie).aggregate(avg=Avg('score'))
+        avg = agg['avg'] or 0.0
+        movie.avg_rating = avg
+        movie.save(update_fields=['avg_rating'])
+
+        data = {
+            'rating': RatingSerializer(rating).data,
+            'avg_rating': avg
+        }
+        return Response(data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
