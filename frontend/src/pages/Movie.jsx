@@ -43,9 +43,24 @@ export default function Movie({ movie }) {
           </div>
 
           <div className="mt-2 flex items-center justify-between">
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">
-              {typeof movie.avg_rating === "number" ? `${movie.avg_rating.toFixed(1)}/10` : "–/10"}
-            </span>
+            <span
+                className={`
+                  text-xs font-semibold px-2 py-1 rounded
+                  ${
+                    typeof movie.avg_rating !== "number"
+                      ? "bg-gray-100 text-gray-800"
+                      : movie.avg_rating < 5
+                      ? "bg-red-100 text-red-800"
+                      : movie.avg_rating < 8
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-green-100 text-green-800"
+                  }
+                `}
+              >
+                {typeof movie.avg_rating === "number"
+                  ? `${movie.avg_rating.toFixed(1)}/10`
+                  : "–/10"}
+              </span>
             <span className="text-xs text-indigo-600 font-medium group-hover:underline">Voir</span>
           </div>
         </div>
