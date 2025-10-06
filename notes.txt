@@ -87,6 +87,22 @@ schema model - serializers:
         v
 [ Client reçoit la réponse JSON ]
 
+WhiteNoise est une bibliothèque Python qui sert à gérer les fichiers statiques (CSS, JavaScript, images, etc.) dans les projets Django, sans avoir besoin d’un serveur web externe comme Nginx ou Apache pour les servir.
+
+Django, en mode développement (DEBUG=True), sert les fichiers statiques lui-même.
+Mais en production (DEBUG=False), Django ne le fait pas par défaut, car ce n’est pas optimal.
+C’est là que WhiteNoise intervient :
+
+Il intercepte les requêtes vers les fichiers statiques.
+
+Il sert ces fichiers efficacement, avec :
+
+Compression Gzip/Brotli automatique (pour réduire la taille des fichiers),
+
+Cache-Control configuré pour de meilleures performances,
+
+Versionnage via des hashed filenames (ex. style.4f3c2a.css).
+
 -------------------- Creation Frontend ----------------------
 
 creer le projet react vite:
@@ -114,3 +130,7 @@ DATABASES = {
     }
 }
 
+creer superuser:
+python3 manage.py createsuperuser
+
+------------------ Deploy on render ---------------
